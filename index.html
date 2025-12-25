@@ -17,6 +17,11 @@ const hex16 = value => {
   return `0000${value.toString(16)}`.substr(-4).toUpperCase();
 };
 
+// Formats an 8-bit integer |value| in binary with leading zeros.
+const bin8 = value => {
+  return `00000000${value.toString(2)}`.substr(-8);
+};
+
 const hexview = data => {
   let buffer = '';
   let u8array = new Uint8Array(data.buffer);
@@ -96,6 +101,20 @@ const handleInputReport = event => {
   const reportData = new Uint8Array(event.data.buffer);
   for (let byte of reportData)
     buffer += ' ' + hex8(byte);
+  inputReportTextView.innerHTML = buffer;
+
+  handleInputReportBin(event)
+}
+
+const handleInputReportBin = event => {
+  const inputReportTextView = document.getElementById('inputReportBin');
+  if (!inputReportTextView)
+    return;
+
+  let buffer = bin8(event.reportId);
+  const reportData = new Uint8Array(event.data.buffer);
+  for (let byte of reportData)
+    buffer += ' ' + bin8(byte);
   inputReportTextView.innerHTML = buffer;
 }
 
@@ -18500,6 +18519,8 @@ window.onload = async () => {
 <br />
 Input report<br />
 <textarea id="inputReport" cols="100" rows="5" disabled></textarea><br />
+Input report (bianry)<br />
+<textarea id="inputReportBin" cols="100" rows="5" disabled></textarea><br />
 Output report <button onclick="sendOutputReport()">Send</button><br />
 <textarea id="outputReport" cols="100" rows="5"></textarea><br />
 Feature report <button onclick="sendFeatureReport()">Send</button><button onclick="receiveFeatureReport()">Receive</button><br />
